@@ -46,7 +46,8 @@ name = ['Lot','Wafer','Mask','TestSite','Name','Date','Script ID','Scipt Version
         ,'ErrorFlag','Error description','Analysis Wavelength[nm]','Rsq of Ref.spectrum(Nth)','Max_transmission of Ref.spec.(dB)','Rsq of IV','I at -1V[A]','I at 1V[A]']
 
 # LMZ 파일만을 순회하기 위한 코드
-start_dir = 'C:\\Users\\audwl\\PycharmProjects\\TeamB_main\\data_file'
+# start_dir = 'C:\\Users\\audwl\\PycharmProjects\\TeamB_main\\data_file'
+start_dir = 'data_file'
 file_paths = [] # 전체 파일 경로를 원소로 가지는 리스트 변수 초기화
 
 # data_file 디렉토리와 그 하위 디렉토리를 순회하면서 파일 경로를 검색
