@@ -47,7 +47,7 @@ name = ['Lot','Wafer','Mask','TestSite','Name','Date','Script ID','Scipt Version
 
 # LMZ 파일만을 순회하기 위한 코드
 # start_dir = 'C:\\Users\\audwl\\PycharmProjects\\TeamB_main\\data_file'
-start_dir = 'data_file'
+start_dir = os.path.join(os.getcwd(),'..','data_file') # 제일 중요한 코드, '..'는 현재 디렉토리의 부모 디렉토리를 반환해주는 코드, 그걸 data_file과 연결
 file_paths = [] # 전체 파일 경로를 원소로 가지는 리스트 변수 초기화
 
 # data_file 디렉토리와 그 하위 디렉토리를 순회하면서 파일 경로를 검색
@@ -55,7 +55,7 @@ for dirpath, dirnames, filenames in os.walk(start_dir):
     for filename in filenames:
         if '_LMZ' in filename and filename.endswith('.xml'):
             file_paths.append(os.path.join(dirpath,filename))
-
+print(file_paths)
 file_numbers = len(file_paths)
 
 for file_name in file_paths:
