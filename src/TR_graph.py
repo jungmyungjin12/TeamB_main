@@ -12,10 +12,8 @@ def plot_TR_graph(Wafer,Date,Position):
     wave_len_half = []
     trans_half = []
     trans_ref = np.array([])
-    wave_len_half = np.array([])
-    trans_half = np.array([])
-    wave_len_max = np.array([])
-    trans_max = np.array([])
+    wave_len_max = []
+    trans_max = []
     smoothed_trans = np.array([])
     temp1 = 0
     temp2 = 0
@@ -41,8 +39,9 @@ def plot_TR_graph(Wafer,Date,Position):
     fit_trans_ref = fc.Ref_fitted_data(wave_len_ref,trans_ref)
     s = 150
     for i in range(wave_len.shape[0]):
-    # for i in range(1,2):
         trans[i] = trans[i] - fit_trans_ref
+        trans_half_temp = []
+        wave_len_half_temp = []
         for k in range(wave_len.shape[1]):
             count = 0
             if k >= (wave_len.shape[1]-(s+1)):
@@ -51,38 +50,48 @@ def plot_TR_graph(Wafer,Date,Position):
                 if trans[i][k] > trans[i][k+g]:
                     count += 1
             if count >= s-4:
-                trans_half.append(trans[i][k])
-                wave_len_half.append(wave_len[i][k])
-                
-    for i in range(wave_len_half.shape[0]):
-        for j in range(wave_len_half.size):
+                trans_half_temp.append(trans[i][k])
+                wave_len_half_temp.append(wave_len[i][k])
+        wave_len_half.append(wave_len_half_temp)
+        trans_half.append(trans_half_temp)
+
+        # plt.plot(wave_len_half[i],trans_half[i],'ro',markersize=0.5)#######
+
+    # for i in range(len(wave_len_half)):
+
+    for i in range(len(wave_len_half)):
+        wave_len_max_temp = []
+        trans_max_temp = []
+        for j in range(len(wave_len_half[i])):
             if j == 0:
-                wave_len_max = np.append(wave_len_max, wave_len_half[i][j])
-                trans_max = np.append(trans_max, trans_half[i][j])
+                wave_len_max_temp.append(wave_len_half[i][j])
+                trans_max_temp.append(trans_half[i][j])
                 continue
-            elif j >= wave_len_half.size - 3:
+            elif j >= len(wave_len_half[i]) - 3:
                 continue
             if (wave_len_half[i][j + 2] - wave_len_half[i][j + 1]) >= (wave_len_half[i][j + 1] - wave_len_half[i][j] + 6):
-                wave_len_max = np.append(wave_len_max, wave_len_half[i][j + 2])
-                trans_max = np.append(trans_max, trans_half[i][j + 2])
-        plt.plot(wave_len_max,trans_max,'ro')
-    wave_len_max = wave_len_max.reshape(temp2, int(wave_len_max.size / temp2))
-    trans_max = trans_max.reshape(temp2,int(trans_max.size / temp2))
+                wave_len_max_temp.append(wave_len_half[i][j + 2])
+                trans_max_temp.append(trans_half[i][j + 2])
+        wave_len_max.append(wave_len_max_temp)
+        trans_max.append(trans_max_temp)
+        # print(wave_len_max_temp,trans_max_temp)
+        # plt.plot(wave_len_max,trans_max,'ro')
+        trans[i] = trans[i] - fc.flat_fit_function(np.array(wave_len_max[i]), np.array(trans_max[i]))(wave_len[i]) # flatten 한 데이터들로 다시 trans 변수를 할당
+        plt.plot(wave_len[i],trans[i],'b-')
     # 극댓값 정보를 찾기 -> 여러개 시도
-    # trans_max = trans_max.reshape(wave_len.shape[0],trans_max.size/wave_len.shape[0])
-    # for i in range(wave_len.shape[0]):
-    #     plt.plot(wave_len[i],trans[i])
-    print(wave_len_max, trans_max)
     plt.show()
 plot_TR_graph('D07','20190715_190855','(0,0)')
 
-'''  -> 시도 방법 1 (극댓값 찾기)
-            for k in range(2,wave_len.shape[1]):
-                if k == wave_len.shape[1]-1:
-                    continue
-                if trans[i][k]>trans[i][k-1] and trans[i][k]<trans[i][k+1]:
-                    trans_max = np.append(trans_max,trans[i][k])
-                    wave_len_max = np.append(wave_len_max,wave_len[i][k])
-        print(trans_max.size,wave_len.shape[0])
-        plt.plot(wave_len_max, trans_max,'ro')
+  # -> 시도 방법 1 (극댓값 찾기)
+'''
+    trans_max=np.array([])
+    wave_len_max=np.array([])
+    for k in range(2, wave_len.shape[1]):
+        if k == wave_len.shape[1] - 1:
+            continue
+        if trans[i][k] > trans[i][k - 1] and trans[i][k] < trans[i][k + 1]:
+            trans_max = np.append(trans_max, trans[i][k])
+            wave_len_max = np.append(wave_len_max, wave_len[i][k])
+    print(trans_max.size, wave_len.shape[0])
+    plt.plot(wave_len_max, trans_max, 'ro',markersize=0.5)
 '''
